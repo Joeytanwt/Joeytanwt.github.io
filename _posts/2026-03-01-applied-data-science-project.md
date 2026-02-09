@@ -1,7 +1,7 @@
 ---
 layout: post
-author: Name
-title: "Applied Data Science Project Documentation"
+author: Joey Tan
+title: "Airbnb Business Analytics"
 categories: ITD214
 ---
 ## Project Background
