@@ -10,15 +10,15 @@ The objective of this project is to build a sentiment classifier to analyse gues
 ## Data Sources
 Two distinct datasets were used for this project: a target dataset for analysis and a labeled training dataset for model training.
 
-1. Target Data (Airbnb Reviews)
-    *  Source: [InsideAirbnb](https://insideairbnb.com/get-the-data/)
-    * The initial dataset contains 38,350 reviews across 6 columns: ```listing_id```, ```id```, ```date```, ```reviewer_id```, ```reviewer_name```, and ```comments```.
+**1. Target Data (Airbnb Reviews)**
+*  Source: [InsideAirbnb](https://insideairbnb.com/get-the-data/)
+* The initial dataset contains 38,350 reviews across 6 columns: ```listing_id```, ```id```, ```date```, ```reviewer_id```, ```reviewer_name```, and ```comments```.
     
 ![alt text](/assets/images/df_sample.jpg)
 
-2. Training Data (TripAdvisor Hotel Reviews)
-    * Source: [TripAdvisor (via Kaggle)](https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews) 
-    * Contains 20,491 rows and 2 columns: ```Review``` and ```Rating```.
+**2. Training Data (TripAdvisor Hotel Reviews)**
+* Source: [TripAdvisor (via Kaggle)](https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews) 
+* Contains 20,491 rows and 2 columns: ```Review``` and ```Rating```.
 
 ![alt text](/assets/images/train_df_sample.jpg)
 
@@ -27,12 +27,14 @@ Two distinct datasets were used for this project: a target dataset for analysis 
 The primary focus of the cleaning process was the ```comments``` column, which contained dirty data:
 
 * HTML tags such as ```<br/>```
+
 ![alt text](/assets/images/html_tags.jpg)
 
 * Non-English text: 
+
 ![alt text](/assets/images/non_engsample.jpg)
 
-* Unnecessary columns (listing_id, id, date, etc.) were dropped.
+* Unnecessary columns (```listing_id```, ```id```, ```date```, etc.) were dropped.
 
 * Nulls and Duplicates were removed.
 
@@ -41,9 +43,9 @@ After cleaning, the final dataset consisted of 372 unique reviews.
 #### TripAdvisor Data
 As the Airbnb dataset didn't contain sentiment labels, an external TripAdvisor Hotel Reviews dataset was used to train the classifier. The dataset contained a ```Rating``` column with values ranging from 1 to 5. To convert this into a supervised learning problem for sentiment analysis, the ratings were transformed into a categorical label with the following logic:
 
-* Negative (0): Ratings of 1 and 2.
-* Neutral (1): Rating of 3.
-* Positive (2): Ratings of 4 and 5.
+* **Negative (0):** Ratings of 1 and 2.
+* **Neutral (1):** Rating of 3.
+* **Positive (2):** Ratings of 4 and 5.
 
 The training data was then processed using the same cleaning steps above and balanced by sampling 500 rows of each class.
 
@@ -92,7 +94,15 @@ Instead of fine-tuning the entire transformer architecture, the Feature Extracti
 ```
 ## Classification with Logistic Regression
 Once the DistilBERT features were extracted, they served as the input for a Logistic Regression classifier which performed the final multi-class classification task to categorize reviews into the 3 labels (Negative, Neutral, or Positive).
+```
+parameters = {'C': np.linspace(0.0001, 100, 20)}
+grid_search = GridSearchCV(LogisticRegression(multi_class='multinomial'),
+                           parameters)
+grid_search.fit(x_train, y_train)
 
+lr = grid_search.best_estimator_
+y_pred = lr.predict(x_test)
+```
 
 ### Evaluation
 The model was evaluated using a train-test split (80/20).
@@ -110,9 +120,9 @@ To resolve this, a Grid Search was performed with the following adjustments:
 
 * Log-scale regularization (C): Switched from a linear scale to a log scale to explore stronger regularization values.
 
-* L1 and L2 penalties: Both penalty types were included in the search. L1 encourages sparsity (zeroing out less important features), while L2 shrinks all weights uniformly. This gave the model more options to generalize.
+* L1 and L2 penalties: Both penalty types were included in the search. L1 encourages sparsity (zeroing out less important features), while L2 shrinks all weights uniformly.
 
-* Macro-F1 scoring metric: The evaluation metric was changed from default accuracy to f1_macro, which equally weights performance across all three classes.
+* Macro-F1 scoring metric: The evaluation metric was changed from the default accuracy to f1_macro, which equally weights performance across all three classes.
 
 ```
 parameters = {
@@ -174,21 +184,21 @@ Only 21 out of 372 reviews were flagged as negative. While this low volume is ex
 
 **1. Manage Guest Expectations**
 
-Update Listing Description: Since construction noise is a recurring external issue beyond the owner's control, proactively stating this in the Airbnb listing will manage guest expectations before they book.
+* Update Listing Description: Since construction noise is a recurring external issue beyond the owner's control, proactively stating this in the Airbnb listing will manage guest expectations before they book.
 
-Provide Comfort Amenities: To mitigate the construction and elevator noise, the owner could provide complimentary earplugs in every room.
+* Provide Comfort Amenities: To mitigate the construction and elevator noise, the owner could provide complimentary earplugs in every room.
 
 **2.  Prioritize Targeted Maintenance**
 
-Some reviews point to specific infrastructure issues (elevator noise, plumbing/sewer smells, broken AC, and faulty bathroom locks). The owner should identify which specific room numbers correlate with these complaints and temporarily block them from being booked until plumbing and soundproofing repairs are completed.
+* Some reviews point to specific infrastructure issues (elevator noise, plumbing/sewer smells, broken AC, and faulty bathroom locks). The owner should identify which specific room numbers correlate with these complaints and temporarily block them from being booked until plumbing and soundproofing repairs are completed.
 
-Improve Shower Facilities: Ensure hot water heaters are consistently serviced and that bathroom ventilation is improved to resolve the lingering odor issues mentioned.
+* Improve Shower Facilities: Ensure hot water heaters are consistently serviced and that bathroom ventilation is improved to resolve the lingering odor issues mentioned.
 
 **3. Elevate the "Neutral" Experience**
 
-Enhance the Check-in Process: One review noted the check-in was "overly complicated." Streamlining this process (e.g., using a clear visual guide, a digital lockbox, or a pre-arrival WhatsApp message) will provide a good first impression.
+* Enhance the Check-in Process: One review noted the check-in was "overly complicated." Streamlining this process (e.g., using a clear visual guide, a digital lockbox, or a pre-arrival WhatsApp message) will provide a good first impression.
 
-Leverage Staff Strengths: Since the staff is frequently praised, empower them to add personalized touches (e.g., a handwritten welcome note or local dining recommendations). These low-cost, high-impact gestures are proven to convert "neutral" stays into positive reviews.
+* Leverage Staff Strengths: Since the staff is frequently praised, empower them to add personalized touches (e.g., a handwritten welcome note or local dining recommendations). These low-cost, high-impact gestures are proven to convert "neutral" stays into positive reviews.
 
 ---
 # AI Ethics
