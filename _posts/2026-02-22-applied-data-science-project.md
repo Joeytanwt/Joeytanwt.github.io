@@ -219,6 +219,6 @@ While the logistic regression classifier is highly interpretable, the DistilBERT
 ## Source Codes and Datasets
 Notebook: https://github.com/Joeytanwt/Airbnb_Sentiment_Classification
 
-Aribnb Data Source: https://insideairbnb.com/get-the-data/
+Aribnb Data Source: https://data.insideairbnb.com/singapore/sg/singapore/2025-09-28/data/reviews.csv.gz
 
 Trip Advisor Data Source: https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews
