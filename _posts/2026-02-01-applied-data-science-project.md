@@ -132,7 +132,8 @@ The tuned model also showed a smaller gap on the ROC curve between training and 
 
 ![alt text](mod_2_roc.jpg)
 
-## Predicting Airbnb Sentiment
+# Recommendations and Analysis
+
 The trained model was applied to the 372 cleaned reviews of Airbnb Listing 42081657. The predicted sentiment distribution is as follows:
 
 |Sentiment|Count|Proportion|
@@ -141,15 +142,77 @@ The trained model was applied to the 372 cleaned reviews of Airbnb Listing 42081
 |Neutral | 113 | 30% |
 |Negative | 21 | 6% |
 
-## Recommendation and Analysis
-Explain the analysis and recommendations
+The overall guest perception is positive, though some operational friction points exist.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
+### Favorable Guest Satisfaction (64% Positive)
+
+Guests frequently praise the location ("Easy to find") and the high level of service provided by the staff ("easy to talk to, and very professional"). This indicates that the property's personnel and geographic convenience are its strongest assets.
+
+### High Volume of Neutral Sentiments (30%)
+
+![alt text](neutral_revs.jpg)
+
+Neutral reviews frequently contain mixed sentiments (e.g., praising the location but mentioning a minor inconvenience) or purely factual statements without strong emotional vocabulary.
+
+### Low Attrition Rate (6% Negative) with Specific Pain Points
+
+![alt text](neg_revs.jpg)
+
+Only 21 out of 372 reviews were flagged as negative. While this low volume is excellent, isolating these 21 reviews reveals recurring issues that disrupt the guest experience:
+
+ * **External Noise:** Multiple guests complained about noise from adjacent construction sites ("noisy skyscraper construction all night", "construction site on both sides").
+
+* **Internal Noise:** Some guests reported disruptive noises from the elevator ("elevator bangs and slams"). 
+
+* **Bathroom**: A few reviews highlighted complains regarding bathroom maintenance (e.g., sliding doors not locking, poor drainage, sewer smells and no hot water).
+
+## Recommendations for the Property Owner
+
+**1. Manage Guest Expectations**
+
+Update Listing Description: Since construction noise is a recurring external issue beyond the owner's control, proactively stating this in the Airbnb listing will manage guest expectations before they book.
+
+Provide Comfort Amenities: To mitigate the construction and elevator noise, the owner could provide complimentary earplugs in every room.
+
+**2.  Prioritize Targeted Maintenance**
+
+Some reviews point to specific infrastructure issues (elevator noise, plumbing/sewer smells, broken AC, and faulty bathroom locks). The owner should identify which specific room numbers correlate with these complaints and temporarily block them from being booked until plumbing and soundproofing repairs are completed.
+
+Improve Shower Facilities: Ensure hot water heaters are consistently serviced and that bathroom ventilation is improved to resolve the lingering odor issues mentioned.
+
+**3. Elevate the "Neutral" Experience**
+
+Enhance the Check-in Process: One review noted the check-in was "overly complicated." Streamlining this process (e.g., using a clear visual guide, a digital lockbox, or a pre-arrival WhatsApp message) will provide a good first impression.
+
+Leverage Staff Strengths: Since the staff is frequently praised, empower them to add personalized touches (e.g., a handwritten welcome note or local dining recommendations). These low-cost, high-impact gestures are proven to convert "neutral" stays into positive reviews.
 
 ## AI Ethics
-Discuss the potential data science ethics issues (privacy, fairness, accuracy, accountability, transparency) in your project. 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit. Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, molestie et arcu. Mauris lobortis nulla et felis ullamcorper bibendum. Phasellus et hendrerit mauris. Proin eget nibh a massa vestibulum pretium. Suspendisse eu nisl a ante aliquet bibendum quis a nunc. Praesent varius interdum vehicula. Aenean risus libero, placerat at vestibulum eget, ultricies eu enim. Praesent nulla tortor, malesuada adipiscing adipiscing sollicitudin, adipiscing eget est.
+### Privacy and Data Anonymization
+
+The project took steps to anonymize the data by dropping explicit personally identifiable columns, such as ```reviewer_id``` and ```reviewer_name```.
+
+However, a residual privacy risk remains within the unstructured text column. Guests frequently include names of hosts or travel companions in their reviews (e.g., "Thank you Nigel"). While this dataset is public, deploying the model in a private enterprise would require additional processing steps, such as using Named Entity Recognition (NER) to mask names and sensitive details before the data is stored or processed.
+
+### Fairness and Representation Bias
+
+The data cleaning process intentionally filtered out non-English reviews to simplify the project, this decision introduces representation bias. By excluding non-English feedback, the model silences the voices of international guests from non-English-speaking regions.
+
+Additionally, training the model on a general TripAdvisor dataset introduces a domain and cultural shift. The model may struggle to accurately evaluate Singlish or localized terms found in the Singaporean Airbnb reviews. A fair model would require a diverse, multilingual training dataset that accurately reflects the property's global guest demographic.
+
+### Accuracy and Labeling Assumptions
+
+The project relied on proxy labeling, assuming that a 3-star TripAdvisor rating equates to a "Neutral" sentiment. In reality, a 3-star review may contain highly polarized statements (e.g., "The location was amazing, but the room was filthy").
+
+Because the model struggles most with this neutral class, there is a risk of misclassifying actionable negative feedback as neutral. If severe complaints—such as safety concerns or hygiene issues—are absorbed into the neutral category, the property owner might fail to address critical problems.
+
+### Accountability
+
+The property owners must be aware of the model's limitations (73% accuracy rate and 60% recall in neutral class) and accountable for how they interpret insights. High-stakes decisions, such as firing a cleaning vendor based on "negative" sentiment trends, should always involve human-in-the-loop verification.
+
+### Transparency and Explainability
+
+While the logistic regression classifier is highly interpretable, the DistilBERT embeddings is a "black box." It is difficult to explain exactly which words or phrases triggered a specific sentiment prediction. Future iterations of this project could incorporate explainable AI (XAI) tools to highlight the specific keywords driving the model's decisions.
 
 ## Source Codes and Datasets
 Upload your model files and dataset into a GitHub repo and add the link here. 
