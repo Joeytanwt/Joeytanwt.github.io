@@ -13,22 +13,24 @@ Two distinct datasets were used for this project: a target dataset for analysis 
 1. Target Data (Airbnb Reviews)
     *  Source: [InsideAirbnb](https://insideairbnb.com/get-the-data/)
     * The initial dataset contains 38,350 reviews across 6 columns: ```listing_id```, ```id```, ```date```, ```reviewer_id```, ```reviewer_name```, and ```comments```.
-    ![alt text](df_sample.jpg)
+    
+![alt text](images/df_sample.jpg)
 
 2. Training Data (TripAdvisor Hotel Reviews)
     * Source: [TripAdvisor (via Kaggle)](https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews) 
     * Contains 20,491 rows and 2 columns: ```Review``` and ```Rating```.
-    ![alt text](train_df_sample.jpg)
+
+![alt text](images/train_df_sample.jpg)
 
 ### Data Preparation
 #### Airbnb Data
 The primary focus of the cleaning process was the ```comments``` column, which contained dirty data:
 
 * HTML tags such as ```<br/>```
-![alt text](html_tags.jpg)
+![alt text](images/html_tags.jpg)
 
 * Non-English text: 
-![alt text](non_engsample.jpg)
+![alt text](images/non_engsample.jpg)
 
 * Unnecessary columns (listing_id, id, date, etc.) were dropped.
 
@@ -45,7 +47,7 @@ As the Airbnb dataset didn't contain sentiment labels, an external TripAdvisor H
 
 The training data was then processed using the same cleaning steps above and balanced by sampling 500 rows of each class.
 
-![alt text](balanced(with_neutral).jpg)
+![alt text](images/balanced(with_neutral).jpg)
 
 # Modelling
 ## Feature Extraction with DistilBERT
@@ -96,12 +98,12 @@ The model was evaluated using a train-test split (80/20).
 #### Initial Performance
 The baseline model achieved an accuracy of ~68% and struggled with the "Neutral" class, misclassifying almost half of all neutral sentiments as negative/positive.
 
-![alt text](mod_1_met.jpg)
-![alt text](mod_1_cm.jpg)
+![alt text](images/mod_1_met.jpg)
+![alt text](images/mod_1_cm.jpg)
 
 The ROC curve also showed that the model was overfitting with a high training AUC but a low validation AUC.
 
-![alt text](mod_1_roc.jpg)
+![alt text](images/mod_1_roc.jpg)
 
 To resolve this, a Grid Search was performed with the following adjustments:
 
@@ -125,12 +127,12 @@ grid_search.fit(x_train, y_train)
 #### Tuned Performance
 After tuning, the model improved slightly across all metrics, though it still struggles with the neutral class. This is likely due to the ambiguity in neutral reviews.
 
-![alt text](mod_2_met.jpg)
-![alt text](mod_2_cm.jpg)
+![alt text](images/mod_2_met.jpg)
+![alt text](images/mod_2_cm.jpg)
 
 The tuned model also showed a smaller gap on the ROC curve between training and test sets.
 
-![alt text](mod_2_roc.jpg)
+![alt text](images/mod_2_roc.jpg)
 
 # Analysis and Recommendations
 
@@ -150,13 +152,13 @@ Guests frequently praise the location ("Easy to find") and the high level of ser
 
 ### High Volume of Neutral Sentiments (30%)
 
-![alt text](neutral_revs.jpg)
+![alt text](images/neutral_revs.jpg)
 
 Neutral reviews frequently contain mixed sentiments (e.g., praising the location but mentioning a minor inconvenience) or purely factual statements without strong emotional vocabulary.
 
 ### Low Attrition Rate (6% Negative) with Specific Pain Points
 
-![alt text](neg_revs.jpg)
+![alt text](images/neg_revs.jpg)
 
 Only 21 out of 372 reviews were flagged as negative. While this low volume is excellent, isolating these 21 reviews reveals recurring issues that disrupt the guest experience:
 
@@ -215,4 +217,8 @@ The property owners must be aware of the model's limitations (73% accuracy rate 
 While the logistic regression classifier is highly interpretable, the DistilBERT embeddings is a "black box." It is difficult to explain exactly which words or phrases triggered a specific sentiment prediction. Future iterations of this project could incorporate explainable AI (XAI) tools to highlight the specific keywords driving the model's decisions.
 
 ## Source Codes and Datasets
-Upload your model files and dataset into a GitHub repo and add the link here. 
+Notebook: https://github.com/Joeytanwt/Airbnb_Sentiment_Classification
+
+Aribnb Data Source: https://insideairbnb.com/get-the-data/
+
+Trip Advisor Data Source: https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews
