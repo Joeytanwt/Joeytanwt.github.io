@@ -132,7 +132,7 @@ The tuned model also showed a smaller gap on the ROC curve between training and 
 
 ![alt text](mod_2_roc.jpg)
 
-# Recommendations and Analysis
+# Analysis and Recommendations
 
 The trained model was applied to the 372 cleaned reviews of Airbnb Listing 42081657. The predicted sentiment distribution is as follows:
 
