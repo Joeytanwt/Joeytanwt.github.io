@@ -5,7 +5,7 @@ title: "Airbnb Business Analytics"
 categories: ITD214
 ---
 # Project Background
-The objective of this project is to build a sentiment classifier to analyse guest feedback for a specific Airbnb property. Due to the large volume of data in the complete Singapore Airbnb dataset, this analysis focuses on Listing ID 42081657, a property with approximately 500 reviews.
+The objective of this project is to build a sentiment classifier to analyse guest feedback for a specific Airbnb property. Due to the large volume of data in the complete Singapore Airbnb dataset, this analysis focuses on **Listing ID 42081657**, a property with approximately 500 reviews.
 
 ## Data Sources
 Two distinct datasets were used for this project: a target dataset for analysis and a labeled training dataset for model training.
@@ -16,14 +16,14 @@ Two distinct datasets were used for this project: a target dataset for analysis 
     
 ![alt text](/assets/images/df_sample.jpg)
 
-**2. Training Data (TripAdvisor Hotel Reviews)**
-* Source: [TripAdvisor (via Kaggle)](https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews) 
+**2. Training Data (TripA dvisor Hotel Reviews)**
+* Source: [Trip Advisor (via Kaggle)](https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews) 
 * Contains 20,491 rows and 2 columns: ```Review``` and ```Rating```.
 
 ![alt text](/assets/images/train_df_sample.jpg)
 
 ### Data Preparation
-#### Airbnb Data
+#### **Airbnb Data**
 The primary focus of the cleaning process was the ```comments``` column, which contained dirty data:
 
 * HTML tags such as ```<br/>```
@@ -40,8 +40,8 @@ The primary focus of the cleaning process was the ```comments``` column, which c
 
 After cleaning, the final dataset consisted of 372 unique reviews.
 
-#### TripAdvisor Data
-As the Airbnb dataset didn't contain sentiment labels, an external TripAdvisor Hotel Reviews dataset was used to train the classifier. The dataset contained a ```Rating``` column with values ranging from 1 to 5. To convert this into a supervised learning problem for sentiment analysis, the ratings were transformed into a categorical label with the following logic:
+#### **Trip Advisor Data**
+As the Airbnb dataset didn't contain sentiment labels, an external Trip Advisor Hotel Reviews dataset was used to train the classifier. The dataset contained a ```Rating``` column with values ranging from 1 to 5. To convert this into a supervised learning problem for sentiment analysis, the ratings were transformed into a categorical label with the following logic:
 
 * **Negative (0):** Ratings of 1 and 2.
 * **Neutral (1):** Rating of 3.
@@ -54,7 +54,7 @@ The training data was then processed using the same cleaning steps above and bal
 ---
 # Modelling
 ## Feature Extraction with DistilBERT
-This project employed Transfer Learning by leveraging a pre-trained DistilBERT model.
+This project employed Transfer Learning by leveraging a pre-trained DistilBERT model. Unlike traditional Bag-of-Words or TF-IDF methods that treat words independently, DistilBERT processes text bidirectionally to understand the context and semantics of sentences. This is highly beneficial for interpreting the informal language found in hotel reviews.
 ```
 model_class, tokenizer_class, pretrained_weights = (ppb.DistilBertModel,
                                                     ppb.DistilBertTokenizer,
@@ -63,7 +63,7 @@ model_class, tokenizer_class, pretrained_weights = (ppb.DistilBertModel,
 tokenizer = tokenizer_class.from_pretrained(pretrained_weights)
 model = model_class.from_pretrained(pretrained_weights)
 ```
-Instead of fine-tuning the entire transformer architecture, the Feature Extraction approach was used:
+Instead of fine-tuning the entire transformer architecture, the feature extraction approach was used:
 
 * The review text was passed through the DistilBERT tokenizer and model.
 
@@ -82,7 +82,7 @@ Instead of fine-tuning the entire transformer architecture, the Feature Extracti
                           batch_size=32,
                           shuffle=False)
 
-  #embedding
+  # embedding
   embeddings = []
   with torch.no_grad():
     for batch, batch_mask in dataloader:
@@ -159,6 +159,8 @@ The trained model was applied to the 372 cleaned reviews of Airbnb Listing 42081
 The overall guest perception is positive, though some operational friction points exist.
 
 ### Favorable Guest Satisfaction (64% Positive)
+
+![alt text](/assets/images/pos_revs.jpg)
 
 Guests frequently praise the location ("Easy to find") and the high level of service provided by the staff ("easy to talk to, and very professional"). This indicates that the property's personnel and geographic convenience are its strongest assets.
 
