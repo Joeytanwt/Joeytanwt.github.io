@@ -38,7 +38,7 @@ The primary focus of the cleaning process was the ```comments``` column, which c
 
 * Nulls and Duplicates were removed.
 
-After cleaning, the final dataset consisted of 372 unique reviews.
+After cleaning, the final dataset consisted of 370 unique reviews.
 
 #### **Trip Advisor Data**
 As the Airbnb dataset didn't contain sentiment labels, an external Trip Advisor Hotel Reviews dataset was used to train the classifier. The dataset contained a ```Rating``` column with values ranging from 1 to 5. To convert this into a supervised learning problem for sentiment analysis, the ratings were transformed into a categorical label with the following logic:
@@ -52,9 +52,9 @@ The training data was then processed using the same cleaning steps above and bal
 ![alt text](/assets/images/balanced(with_neutral).jpg)
 
 ---
-# Modelling
+# Transfer Learning
 ## Feature Extraction with DistilBERT
-This project employed Transfer Learning by leveraging a pre-trained DistilBERT model. Unlike traditional Bag-of-Words or TF-IDF methods that treat words independently, DistilBERT processes text bidirectionally to understand the context and semantics of sentences. This is highly beneficial for interpreting the informal language found in hotel reviews.
+This project uses Transfer Learning by leveraging a pre-trained DistilBERT model. Unlike traditional Bag-of-Words or TF-IDF methods that treat words independently, DistilBERT processes text bidirectionally to understand the context and semantics of sentences. This is highly beneficial for interpreting the informal language found in hotel reviews.
 ```
 model_class, tokenizer_class, pretrained_weights = (ppb.DistilBertModel,
                                                     ppb.DistilBertTokenizer,
@@ -92,95 +92,119 @@ Instead of fine-tuning the entire transformer architecture, the feature extracti
 
   x = np.concatenate(embeddings, axis=0)
 ```
-## Classification with Logistic Regression
-Once the DistilBERT features were extracted, they served as the input for a Logistic Regression classifier which performed the final multi-class classification task to categorize reviews into the 3 labels (Negative, Neutral, or Positive).
+## Modelling
+Once the DistilBERT features were extracted, they served as the input for 3 classifiers that performed the final multi-class classification task to categorize reviews into the 3 labels (Negative, Neutral, or Positive). The models were then evaluated using a train-test split (80/20).
+
 ```
-parameters = {'C': np.linspace(0.0001, 100, 20)}
-grid_search = GridSearchCV(LogisticRegression(multi_class='multinomial'),
-                           parameters)
-grid_search.fit(x_train, y_train)
+def evaluate_model(mod, x_train, y_train, x_test, y_test):
+  mod.fit(x_train, y_train)
+  y_pred = mod.predict(x_test)
 
-lr = grid_search.best_estimator_
-y_pred = lr.predict(x_test)
+  return accuracy_score(y_test, y_pred)
+
+lr = LogisticRegression(multi_class='multinomial')
+svm = SVC(probability=True)
+tree = DecisionTreeClassifier()
+
+models = {'Logistic Regression':lr, 'SVM':svm, 'Decision Tree':tree}
+scores = []
+for model_name, mod in models.items():
+  score = evaluate_model(mod, x_train, y_train, x_test, y_test)
+  scores.append({'Model': model_name, 'Score': score})
+
+df_scores = pd.DataFrame(scores)
+df_scores.sort_values(by='Score', ascending=False).reset_index(drop=True)
 ```
 
-### Evaluation
-The model was evaluated using a train-test split (80/20).
-#### Initial Performance
-The baseline model achieved an accuracy of ~68% and struggled with the "Neutral" class, misclassifying almost half of all neutral sentiments as negative/positive.
+## Evaluation
 
-![alt text](/assets/images/mod_1_met.jpg)
-![alt text](/assets/images/mod_1_cm.jpg)
+|Model|Score|
+|---|---|
+| SVM | 0.72 |
+| Logistic Regression | 0.69 |
+| Decision Tree | 0.50 |
 
-The ROC curve also showed that the model was overfitting with a high training AUC but a low validation AUC.
+The SVM model was chosen as it achieved the highest accuracy of 72%. However, it struggled with the "Neutral" class (0.65 recall), misclassifying 35% of all neutral sentiments as negative/positive.
 
-![alt text](/assets/images/mod_1_roc.jpg)
+![alt text](/assets/images/svm_class_report.jpg)
+![alt text](/assets/images/svm_cm.jpg)
 
-To resolve this, a Grid Search was performed with the following adjustments:
+The ROC curve also showed that the model was overfitting slightly (0.87 train AUC vs 0.79 test AUC).
 
-* Log-scale regularization (C): Switched from a linear scale to a log scale to explore stronger regularization values.
+![alt text](/assets/images/svm_roc.jpg)
 
-* L1 and L2 penalties: Both penalty types were included in the search. L1 encourages sparsity (zeroing out less important features), while L2 shrinks all weights uniformly.
+## Tuning Model
+
+To resolve this, a Grid Search was performed with the following parameters:
+
+* Log-scale regularization (C): Used a log scale to explore stronger regularization values.
 
 * Macro-F1 scoring metric: The evaluation metric was changed from the default accuracy to f1_macro, which equally weights performance across all three classes.
 
 ```
-parameters = {
-    'C': np.logspace(-10, 1, 10),
-    'penalty': ['l1','l2']
-    }
-
-clf = LogisticRegression(multi_class='multinomial')
-
-grid_search = GridSearchCV(clf, parameters, scoring='f1_macro')
+params = [
+    {'kernel': ['linear'],
+     'C': np.logspace(-10, 1, 10)},
+    {'kernel': ['rbf'],
+     'C': np.logspace(-10, 1, 10),
+     'gamma': ['scale', 'auto', 0.1, 0.01]}
+]
+grid_search = GridSearchCV(svm, params, scoring='f1_macro')
 grid_search.fit(x_train, y_train)
 ```
-#### Tuned Performance
+
 After tuning, the model improved slightly across all metrics, though it still struggles with the neutral class. This is likely due to the ambiguity in neutral reviews.
 
-![alt text](/assets/images/mod_2_met.jpg)
-![alt text](/assets/images/mod_2_cm.jpg)
-
-The tuned model also showed a smaller gap on the ROC curve between training and test sets.
-
-![alt text](/assets/images/mod_2_roc.jpg)
+![alt text](/assets/images/svm_tuned_class_report.jpg)
+![alt text](/assets/images/svm_tuned_cm.jpg)
+![alt text](/assets/images/svm_tuned_roc.jpg)
 
 ---
 # Analysis and Recommendations
 
-The trained model was applied to the 372 cleaned reviews of Airbnb Listing 42081657. The predicted sentiment distribution is as follows:
+The trained model was applied to the 370 cleaned reviews of Airbnb Listing 42081657. The predicted sentiment distribution is as follows:
 
 |Sentiment|Count|Proportion|
 |---|---|---|
-|Positive | 239 | 64% |
-|Neutral | 113 | 30% |
-|Negative | 21 | 6% |
+|Positive | 220 | 59% |
+|Neutral | 139 | 38% |
+|Negative | 11 | 3% |
 
 The overall guest perception is positive, though some operational friction points exist.
 
-### Favorable Guest Satisfaction (64% Positive)
+### Favorable Guest Satisfaction (59% Positive)
 
-![alt text](/assets/images/pos_revs.jpg)
+![alt text](/assets/images/pos_sample_10.jpg)
 
-Guests frequently praise the location ("Easy to find") and the high level of service provided by the staff ("easy to talk to, and very professional"). This indicates that the property's personnel and geographic convenience are its strongest assets.
+Guests frequently praise the location ("conveniently located near the MTR, with plenty of restaurants and shops in the area") and the high level of service provided by the staff ("very quick responses from the hosts"). This indicates that the property's personnel and geographic convenience are its strongest assets.
 
-### High Volume of Neutral Sentiments (30%)
+### High Volume of Neutral Sentiments (38%)
 
-![alt text](/assets/images/neutral_revs.jpg)
+![alt text](/assets/images/neutral_sample_10.jpg)
 
-Neutral reviews frequently contain mixed sentiments (e.g., praising the location but mentioning a minor inconvenience) or purely factual statements without strong emotional vocabulary.
+Neutral reviews frequently contain mixed sentiments (e.g., praising the location but mentioning a minor inconvenience) or purely factual statements without strong emotional vocabulary. A number of reviews seem to be misclassified such as "Clean and quiet room. Good location. Friendly checkin and checkout. Clean kitchen." (Positive) and "Totally bad with the construction outside. Noisy, dangerous and hard to go in & out as the only way in is through the back lane. Noise was loud during day time and also on Sunday morning" (Negative).
 
-### Low Attrition Rate (6% Negative) with Specific Pain Points
+### Low Attrition Rate (3% Negative) with Specific Pain Points
 
 ![alt text](/assets/images/neg_revs.jpg)
 
-Only 21 out of 372 reviews were flagged as negative. While this low volume is excellent, isolating these 21 reviews reveals recurring issues that disrupt the guest experience:
+Only 11 out of 370 reviews were flagged as negative. While this low volume is excellent, isolating these 11 reviews reveals recurring issues that disrupt the guest experience:
 
- * **External Noise:** Multiple guests complained about noise from adjacent construction sites ("noisy skyscraper construction all night", "construction site on both sides").
+ * **External Noise:** Multiple guests complained about noise from adjacent construction sites ("noisy skyscraper construction all night").
 
 * **Internal Noise:** Some guests reported disruptive noises from the elevator ("elevator bangs and slams"). 
 
-* **Bathroom**: A few reviews highlighted complains regarding bathroom maintenance (e.g., sliding doors not locking, poor drainage, sewer smells and no hot water).
+* **Bathroom**: A few reviews highlighted complains regarding bathroom maintenance (e.g., sliding doors not locking, sewer smells and no hot water).
+
+## Model Limitations
+
+While the model shows a reasonable accuracy of 0.74, there are limitations that need to be considered:
+
+**1. Misclassification of Negative Reviews:** During evaluation, the model misclassified 21 out of 100 negative reviews. This indicates a blind spot where critical feedback might be overlooked as actual negative experiences are downplayed to a neutral sentiment.
+
+**2. Struggles with Neutral Sentiment:** The model shows challenges with the neutral class (0.68 recall). This means that a significant portion (32%) of actual neutral reviews are being misclassified. This however acts as a safety net as it is better to misclassify neutral reviews as negative because the business cost of ignoring a guest complaint is much higher than the cost of over-investigating a neutral comment. 
+
+
 
 ## Recommendations for the Property Owner
 
@@ -225,11 +249,11 @@ Because the model struggles most with this neutral class, there is a risk of mis
 
 ## Accountability
 
-The property owners must be aware of the model's limitations (73% accuracy rate and 60% recall in neutral class) and accountable for how they interpret insights. High-stakes decisions, such as firing a cleaning vendor based on "negative" sentiment trends, should always involve human-in-the-loop verification.
+The property owners must be aware of the model's limitations (70% accuracy rate and 68% recall in neutral class) and accountable for how they interpret insights. High-stakes decisions, such as firing a cleaning vendor based on "negative" sentiment trends, should always involve human-in-the-loop verification.
 
 ## Transparency and Explainability
 
-While the logistic regression classifier is highly interpretable, the DistilBERT embeddings is a "black box." It is difficult to explain exactly which words or phrases triggered a specific sentiment prediction. Future iterations of this project could incorporate explainable AI (XAI) tools to highlight the specific keywords driving the model's decisions.
+DistilBERT processes text using millions of parameters and attention mechanisms to generate high-dimensional contextual embeddings and SVM classifiers draw complex decision boundaries in multi-dimensional spaces. It is difficult to explain exactly which words or phrases triggered a specific sentiment prediction. Future iterations of this project could incorporate explainable AI (XAI) tools to highlight the specific keywords driving the model's decisions.
 
 ---
 # Source Codes and Datasets
