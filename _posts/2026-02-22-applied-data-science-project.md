@@ -204,8 +204,6 @@ While the model shows a reasonable accuracy of 0.74, there are limitations that 
 
 **2. Struggles with Neutral Sentiment:** The model shows challenges with the neutral class (0.68 recall). This means that a significant portion (32%) of actual neutral reviews are being misclassified. This however acts as a safety net as it is better to misclassify neutral reviews as negative because the business cost of ignoring a guest complaint is much higher than the cost of over-investigating a neutral comment. 
 
-
-
 ## Recommendations for the Property Owner
 
 **1. Manage Guest Expectations**
