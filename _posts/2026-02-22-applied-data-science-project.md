@@ -255,7 +255,7 @@ DistilBERT processes text using millions of parameters and attention mechanisms 
 
 ---
 # Source Codes and Datasets
-[Notebook](https://github.com/Joeytanwt/Airbnb_Sentiment_Classification)
+[Notebook](https://github.com/Joeytanwt/Sentiment_Classification_with_DistilBERT)
 
 [Aribnb Data](https://data.insideairbnb.com/singapore/sg/singapore/2025-09-28/data/reviews.csv.gz)
 
