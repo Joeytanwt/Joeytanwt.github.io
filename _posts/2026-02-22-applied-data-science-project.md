@@ -182,7 +182,9 @@ Guests frequently praise the location ("conveniently located near the MTR, with 
 
 ![alt text](/assets/images/neutral_sample_10.jpg)
 
-Neutral reviews frequently contain mixed sentiments (e.g., praising the location but mentioning a minor inconvenience) or purely factual statements without strong emotional vocabulary. A number of reviews seem to be misclassified, such as "Clean and quiet room. Good location. Friendly checkin and checkout. Clean kitchen." (Positive) and "Totally bad with the construction outside. Noisy, dangerous and hard to go in & out as the only way in is through the back lane. Noise was loud during day time and also on Sunday morning" (Negative).
+Neutral reviews frequently contain mixed sentiments (e.g., praising the location but mentioning a minor inconvenience) or purely factual statements without strong emotional vocabulary. 
+
+A number of reviews seem to be misclassified, such as "Clean and quiet room. Good location. Friendly checkin and checkout. Clean kitchen." (Positive) and "Totally bad with the construction outside. Noisy, dangerous and hard to go in & out as the only way in is through the back lane. Noise was loud during day time and also on Sunday morning" (Negative).
 
 ### Low Attrition Rate (3% Negative) with Specific Pain Points
 
