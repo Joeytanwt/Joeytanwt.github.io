@@ -176,7 +176,7 @@ The overall guest perception is positive, though some operational friction point
 
 ![alt text](/assets/images/pos_sample_10.jpg)
 
-Guests frequently praise the location ("conveniently located near the MTR, with plenty of restaurants and shops in the area") and the high level of service provided by the staff ("very quick responses from the hosts"). This indicates that the property's personnel and geographic convenience are its strongest assets.
+Guests frequently praise the location (<mark>"conveniently located near the MTR, with plenty of restaurants and shops in the area"</mark>) and the high level of service provided by the staff (<mark>"very quick responses from the hosts"</mark>). This indicates that the property's personnel and geographic convenience are its strongest assets.
 
 ### High Volume of Neutral Sentiments (38%)
 
@@ -184,7 +184,7 @@ Guests frequently praise the location ("conveniently located near the MTR, with 
 
 Neutral reviews frequently contain mixed sentiments (e.g., praising the location but mentioning a minor inconvenience) or purely factual statements without strong emotional vocabulary. 
 
-A number of reviews seem to be misclassified, such as "Clean and quiet room. Good location. Friendly checkin and checkout. Clean kitchen." (Positive) and "Totally bad with the construction outside. Noisy, dangerous and hard to go in & out as the only way in is through the back lane. Noise was loud during day time and also on Sunday morning" (Negative).
+A number of reviews seem to be misclassified, such as <mark>"Clean and quiet room. Good location. Friendly checkin and checkout. Clean kitchen."</mark> (Positive) and <mark>"Totally bad with the construction outside. Noisy, dangerous and hard to go in & out as the only way in is through the back lane. Noise was loud during day time and also on Sunday morning"</mark> (Negative).
 
 ### Low Attrition Rate (3% Negative) with Specific Pain Points
 
@@ -192,9 +192,9 @@ A number of reviews seem to be misclassified, such as "Clean and quiet room. Goo
 
 Only 11 out of 370 reviews were flagged as negative. While this low volume is excellent, isolating these 11 reviews reveals recurring issues that disrupt the guest experience:
 
- * **External Noise:** Multiple guests complained about noise from adjacent construction sites ("noisy skyscraper construction all night").
+ * **External Noise:** Multiple guests complained about noise from adjacent construction sites (<mark>"noisy skyscraper construction all night"</mark>).
 
-* **Internal Noise:** Some guests reported disruptive noises from the elevator ("elevator bangs and slams"). 
+* **Internal Noise:** Some guests reported disruptive noises from the elevator (<mark>"elevator bangs and slams"</mark>). 
 
 * **Bathroom**: A few reviews highlighted complaints regarding bathroom maintenance (e.g., sliding doors not locking, sewer smells and no hot water).
 
@@ -233,7 +233,7 @@ While the model shows a reasonable accuracy of 0.74, there are limitations that 
 
 The project took steps to anonymize the data by dropping explicit personally identifiable columns, such as ```reviewer_id``` and ```reviewer_name```.
 
-However, a residual privacy risk remains within the unstructured text column. Guests frequently include names of hosts or travel companions in their reviews (e.g., "Thank you Nigel"). While this dataset is public, deploying the model in a private enterprise would require additional processing steps, such as using Named Entity Recognition (NER) to mask names and sensitive details before the data is stored or processed.
+However, a residual privacy risk remains within the unstructured text column. Guests frequently include names of hosts or travel companions in their reviews (e.g., <mark>"Thank you Nigel"</mark>). While this dataset is public, deploying the model in a private enterprise would require additional processing steps, such as using Named Entity Recognition (NER) to mask names and sensitive details before the data is stored or processed.
 
 ## Fairness and Representation Bias
 
@@ -243,7 +243,7 @@ Additionally, training the model on a general Trip Advisor dataset introduces a 
 
 ## Accuracy and Labeling Assumptions
 
-The project relied on proxy labeling, assuming that a 3-star Trip Advisor rating equates to a "Neutral" sentiment. In reality, a 3-star review may contain highly polarized statements (e.g., "The location was amazing, but the room was filthy").
+The project relied on proxy labeling, assuming that a 3-star Trip Advisor rating equates to a "Neutral" sentiment. In reality, a 3-star review may contain highly polarized statements (e.g., <mark>"The location was amazing, but the room was filthy"</mark>).
 
 Because the model struggles most with this neutral class, there is a risk of misclassifying actionable negative feedback as neutral. If severe complaints—such as safety concerns or hygiene issues—are absorbed into the neutral category, the property owner might fail to address critical problems.
 
