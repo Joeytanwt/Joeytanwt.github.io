@@ -222,9 +222,13 @@ Only 11 out of 370 reviews were flagged as negative. While this low volume is ex
 
 While the model shows a reasonable accuracy of 0.74, there are limitations that need to be considered:
 
-**1. Misclassification of Negative Reviews:** During evaluation, the model misclassified 21 out of 100 negative reviews. This indicates a blind spot where critical feedback might be overlooked as actual negative experiences are downplayed to a neutral sentiment.
+**1. Misclassification of Negative Reviews:** 
 
-**2. Struggles with Neutral Sentiment:** The model shows challenges with the neutral class (0.68 recall). This means that a significant portion (32%) of actual neutral reviews are being misclassified. This, however, acts as a safety net, as it is better to misclassify neutral reviews as negative because the business cost of ignoring a guest complaint is much higher than the cost of over-investigating a neutral comment. 
+During evaluation, the model misclassified 21 out of 100 negative reviews. This indicates a blind spot where critical feedback might be overlooked as actual negative experiences are downplayed to a neutral sentiment.
+
+**2. Struggles with Neutral Sentiment:**
+
+The model shows challenges with the neutral class (0.68 recall). This means that a significant portion (32%) of actual neutral reviews are being misclassified. This, however, acts as a safety net, as it is better to misclassify neutral reviews as negative because the business cost of ignoring a guest complaint is much higher than the cost of over-investigating a neutral comment. 
 
 ---
 # AI Ethics
