@@ -8,7 +8,7 @@ categories: ITD214
 The objective of this project is to build a sentiment classifier to analyse guest feedback for a specific Airbnb property. Due to the large volume of data in the complete Singapore Airbnb dataset, this analysis focuses on **Listing ID 42081657**, a property with approximately 500 reviews.
 
 ## Data Sources
-Two distinct datasets were used for this project: a target dataset for analysis and a labeled training dataset for model training.
+Two distinct datasets were used for this project: a target dataset for analysis and a labelled training dataset for model training.
 
 **1. Target Data (Airbnb Reviews)**
 *  Source: [InsideAirbnb](https://insideairbnb.com/get-the-data/)
@@ -16,7 +16,7 @@ Two distinct datasets were used for this project: a target dataset for analysis 
     
 ![alt text](/assets/images/df_sample.jpg)
 
-**2. Training Data (TripA dvisor Hotel Reviews)**
+**2. Training Data (Trip Advisor Hotel Reviews)**
 * Source: [Trip Advisor (via Kaggle)](https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews) 
 * Contains 20,491 rows and 2 columns: ```Review``` and ```Rating```.
 
@@ -36,7 +36,7 @@ The primary focus of the cleaning process was the ```comments``` column, which c
 
 * Unnecessary columns (```listing_id```, ```id```, ```date```, etc.) were dropped.
 
-* Nulls and Duplicates were removed.
+* **Nulls** and **Duplicates** were removed.
 
 After cleaning, the final dataset consisted of 370 unique reviews.
 
@@ -52,9 +52,9 @@ The training data was then processed using the same cleaning steps above and bal
 ![alt text](/assets/images/balanced(with_neutral).jpg)
 
 ---
-# Transfer Learning
+# Modelling
 ## Feature Extraction with DistilBERT
-This project uses Transfer Learning by leveraging a pre-trained DistilBERT model. Unlike traditional Bag-of-Words or TF-IDF methods that treat words independently, DistilBERT processes text bidirectionally to understand the context and semantics of sentences. This is highly beneficial for interpreting the informal language found in hotel reviews.
+This project uses **Transfer Learning** by leveraging a pre-trained DistilBERT model. Unlike traditional Bag-of-Words or TF-IDF methods that treat words independently, DistilBERT processes text bidirectionally to understand the context and semantics of sentences. This is highly beneficial for interpreting the informal language found in hotel reviews.
 ```
 model_class, tokenizer_class, pretrained_weights = (ppb.DistilBertModel,
                                                     ppb.DistilBertTokenizer,
@@ -92,8 +92,8 @@ Instead of fine-tuning the entire transformer architecture, the feature extracti
 
   x = np.concatenate(embeddings, axis=0)
 ```
-## Modelling
-Once the DistilBERT features were extracted, they served as the input for 3 classifiers that performed the final multi-class classification task to categorize reviews into the 3 labels (Negative, Neutral, or Positive). The models were then evaluated using a train-test split (80/20).
+## Classification
+Once the DistilBERT features were extracted, they served as the input for 3 classifiers that performed the final multi-class classification task to categorise reviews into the 3 labels (Negative, Neutral, or Positive). The models were then evaluated using a train-test split (80/20).
 
 ```
 def evaluate_model(mod, x_train, y_train, x_test, y_test):
@@ -182,7 +182,7 @@ Guests frequently praise the location ("conveniently located near the MTR, with 
 
 ![alt text](/assets/images/neutral_sample_10.jpg)
 
-Neutral reviews frequently contain mixed sentiments (e.g., praising the location but mentioning a minor inconvenience) or purely factual statements without strong emotional vocabulary. A number of reviews seem to be misclassified such as "Clean and quiet room. Good location. Friendly checkin and checkout. Clean kitchen." (Positive) and "Totally bad with the construction outside. Noisy, dangerous and hard to go in & out as the only way in is through the back lane. Noise was loud during day time and also on Sunday morning" (Negative).
+Neutral reviews frequently contain mixed sentiments (e.g., praising the location but mentioning a minor inconvenience) or purely factual statements without strong emotional vocabulary. A number of reviews seem to be misclassified, such as "Clean and quiet room. Good location. Friendly checkin and checkout. Clean kitchen." (Positive) and "Totally bad with the construction outside. Noisy, dangerous and hard to go in & out as the only way in is through the back lane. Noise was loud during day time and also on Sunday morning" (Negative).
 
 ### Low Attrition Rate (3% Negative) with Specific Pain Points
 
@@ -194,7 +194,7 @@ Only 11 out of 370 reviews were flagged as negative. While this low volume is ex
 
 * **Internal Noise:** Some guests reported disruptive noises from the elevator ("elevator bangs and slams"). 
 
-* **Bathroom**: A few reviews highlighted complains regarding bathroom maintenance (e.g., sliding doors not locking, sewer smells and no hot water).
+* **Bathroom**: A few reviews highlighted complaints regarding bathroom maintenance (e.g., sliding doors not locking, sewer smells and no hot water).
 
 ## Recommendations for the Property Owner
 
@@ -222,7 +222,7 @@ While the model shows a reasonable accuracy of 0.74, there are limitations that 
 
 **1. Misclassification of Negative Reviews:** During evaluation, the model misclassified 21 out of 100 negative reviews. This indicates a blind spot where critical feedback might be overlooked as actual negative experiences are downplayed to a neutral sentiment.
 
-**2. Struggles with Neutral Sentiment:** The model shows challenges with the neutral class (0.68 recall). This means that a significant portion (32%) of actual neutral reviews are being misclassified. This however acts as a safety net as it is better to misclassify neutral reviews as negative because the business cost of ignoring a guest complaint is much higher than the cost of over-investigating a neutral comment. 
+**2. Struggles with Neutral Sentiment:** The model shows challenges with the neutral class (0.68 recall). This means that a significant portion (32%) of actual neutral reviews are being misclassified. This, however, acts as a safety net, as it is better to misclassify neutral reviews as negative because the business cost of ignoring a guest complaint is much higher than the cost of over-investigating a neutral comment. 
 
 ---
 # AI Ethics
@@ -251,7 +251,7 @@ The property owners must be aware of the model's limitations (70% accuracy rate 
 
 ## Transparency and Explainability
 
-DistilBERT processes text using millions of parameters and attention mechanisms to generate high-dimensional contextual embeddings and SVM classifiers draw complex decision boundaries in multi-dimensional spaces. It is difficult to explain exactly which words or phrases triggered a specific sentiment prediction. Future iterations of this project could incorporate explainable AI (XAI) tools to highlight the specific keywords driving the model's decisions.
+DistilBERT generates high-dimensional contextual embeddings by processing text with millions of parameters and attention mechanisms, while SVM classifiers draw complex decision boundaries in multidimensional spaces. It is difficult to pinpoint exactly which words or phrases triggered a particular sentiment prediction. Future iterations of this project may include explainable AI (XAI) tools to highlight the specific keywords influencing the model's decisions.
 
 ---
 # Source Codes and Datasets
