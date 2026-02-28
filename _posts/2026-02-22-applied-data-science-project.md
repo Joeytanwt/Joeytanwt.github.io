@@ -196,14 +196,6 @@ Only 11 out of 370 reviews were flagged as negative. While this low volume is ex
 
 * **Bathroom**: A few reviews highlighted complains regarding bathroom maintenance (e.g., sliding doors not locking, sewer smells and no hot water).
 
-## Model Limitations
-
-While the model shows a reasonable accuracy of 0.74, there are limitations that need to be considered:
-
-**1. Misclassification of Negative Reviews:** During evaluation, the model misclassified 21 out of 100 negative reviews. This indicates a blind spot where critical feedback might be overlooked as actual negative experiences are downplayed to a neutral sentiment.
-
-**2. Struggles with Neutral Sentiment:** The model shows challenges with the neutral class (0.68 recall). This means that a significant portion (32%) of actual neutral reviews are being misclassified. This however acts as a safety net as it is better to misclassify neutral reviews as negative because the business cost of ignoring a guest complaint is much higher than the cost of over-investigating a neutral comment. 
-
 ## Recommendations for the Property Owner
 
 **1. Manage Guest Expectations**
@@ -223,6 +215,14 @@ While the model shows a reasonable accuracy of 0.74, there are limitations that 
 * Enhance the Check-in Process: One review noted the check-in was "overly complicated." Streamlining this process (e.g., using a clear visual guide, a digital lockbox, or a pre-arrival WhatsApp message) will provide a good first impression.
 
 * Leverage Staff Strengths: Since the staff is frequently praised, empower them to add personalized touches (e.g., a handwritten welcome note or local dining recommendations). These low-cost, high-impact gestures are proven to convert "neutral" stays into positive reviews.
+
+## Model Limitations
+
+While the model shows a reasonable accuracy of 0.74, there are limitations that need to be considered:
+
+**1. Misclassification of Negative Reviews:** During evaluation, the model misclassified 21 out of 100 negative reviews. This indicates a blind spot where critical feedback might be overlooked as actual negative experiences are downplayed to a neutral sentiment.
+
+**2. Struggles with Neutral Sentiment:** The model shows challenges with the neutral class (0.68 recall). This means that a significant portion (32%) of actual neutral reviews are being misclassified. This however acts as a safety net as it is better to misclassify neutral reviews as negative because the business cost of ignoring a guest complaint is much higher than the cost of over-investigating a neutral comment. 
 
 ---
 # AI Ethics
